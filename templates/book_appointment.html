@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Book Appointment — MediCare HMS{% endblock %}
+{% block page_title %}Book Appointment{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width:860px;">
+  <div class="card-header">
+    <span class="card-title">New Appointment Booking</span>
+    <a href="{{ url_for('appointments') }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-arrow-left"></i> Back</a>
+  </div>
+  <div class="card-body">
+    <form method="post">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Patient *</label>
+          <select name="patient_id" required>
+            <option value="">Select patient</option>
+            {% for p in patients %}
+            <option value="{{ p.id }}">{{ p.first_name }} {{ p.last_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Doctor *</label>
+          <select name="doctor_id" required>
+            <option value="">Select doctor</option>
+            {% for d in doctors %}
+            <option value="{{ d.id }}">Dr. {{ d.first_name }} {{ d.last_name }} — {{ d.specialization }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Appointment Date *</label>
+          <input type="date" name="appointment_date" required min="{{ now }}">
+        </div>
+        <div class="form-group">
+          <label>Appointment Time *</label>
+          <input type="time" name="appointment_time" required>
+        </div>
+        <div class="form-group full">
+          <label>Reason for Visit *</label>
+          <input type="text" name="reason" required placeholder="e.g. Chest pain, routine checkup, follow-up">
+        </div>
+        <div class="form-group full">
+          <label>Additional Notes</label>
+          <textarea name="notes" placeholder="Any relevant medical history, allergies, or special instructions..."></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-calendar-check"></i> Confirm Booking</button>
+        <a href="{{ url_for('appointments') }}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Set minimum date to today
+document.querySelector('[name="appointment_date"]').min =
+  new Date().toISOString().split('T')[0];
+</script>
+{% endblock %}

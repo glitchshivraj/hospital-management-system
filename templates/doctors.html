@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Doctors — MediCare HMS{% endblock %}
+{% block page_title %}Doctors{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Medical Staff <span style="font-size:.85rem; color:var(--muted); font-weight:400;">({{ doctors|length }})</span></span>
+    <a href="{{ url_for('add_doctor') }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-stethoscope"></i> Add Doctor</a>
+  </div>
+  <div class="table-wrap">
+    {% if doctors %}
+    <table>
+      <thead>
+        <tr><th>#</th><th>Doctor</th><th>Specialization</th><th>Qualification</th><th>Experience</th><th>Phone</th><th>Availability</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for d in doctors %}
+        <tr>
+          <td class="text-muted text-small">{{ d.id }}</td>
+          <td>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div class="avatar avatar-green">{{ d.first_name[0] }}{{ d.last_name[0] }}</div>
+              <div>
+                <div style="font-weight:600;">Dr. {{ d.first_name }} {{ d.last_name }}</div>
+                <div class="text-muted text-small">{{ d.email or '' }}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge badge-spec">{{ d.specialization }}</span></td>
+          <td class="text-small text-muted">{{ d.qualification or '—' }}</td>
+          <td>{{ d.experience_years }} yrs</td>
+          <td>{{ d.phone }}</td>
+          <td class="text-small text-muted">{{ d.availability }}</td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <a href="{{ url_for('view_doctor', id=d.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-eye"></i></a>
+              <a href="{{ url_for('edit_doctor', id=d.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-pen"></i></a>
+              <form method="post" action="{{ url_for('delete_doctor', id=d.id) }}" onsubmit="return confirm('Remove this doctor?')">
+                <button class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><i class="fa-solid fa-user-doctor"></i><p>No doctors added yet.</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

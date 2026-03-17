@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — MediCare HMS{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon blue"><i class="fa-solid fa-bed-pulse"></i></div>
+    <div>
+      <div class="stat-value">{{ patients_count }}</div>
+      <div class="stat-label">Registered Patients</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green"><i class="fa-solid fa-user-doctor"></i></div>
+    <div>
+      <div class="stat-value">{{ doctors_count }}</div>
+      <div class="stat-label">Active Doctors</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon orange"><i class="fa-solid fa-calendar-check"></i></div>
+    <div>
+      <div class="stat-value">{{ appointments_count }}</div>
+      <div class="stat-label">Total Appointments</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon purple"><i class="fa-solid fa-clock"></i></div>
+    <div>
+      <div class="stat-value">{{ upcoming_count }}</div>
+      <div class="stat-label">Upcoming Today</div>
+    </div>
+  </div>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Quick Actions</span>
+    </div>
+    <div class="card-body" style="display:flex; flex-direction:column; gap:12px;">
+      <a href="{{ url_for('add_patient') }}" class="btn btn-primary" style="justify-content:center;">
+        <i class="fa-solid fa-user-plus"></i> Register New Patient
+      </a>
+      <a href="{{ url_for('add_doctor') }}" class="btn btn-outline" style="justify-content:center;">
+        <i class="fa-solid fa-stethoscope"></i> Add New Doctor
+      </a>
+      <a href="{{ url_for('book_appointment') }}" class="btn btn-success" style="justify-content:center;">
+        <i class="fa-solid fa-calendar-plus"></i> Book Appointment
+      </a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">System Info</span>
+    </div>
+    <div class="card-body">
+      <table style="font-size:.85rem;">
+        <tr>
+          <td style="padding:8px 0; color:var(--muted); border:none;">System</td>
+          <td style="padding:8px 0; border:none; font-weight:600;">MediCare HMS v1.0</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0; color:var(--muted); border:none;">Backend</td>
+          <td style="padding:8px 0; border:none; font-weight:600;">Flask + MySQL</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0; color:var(--muted); border:none;">Status</td>
+          <td style="padding:8px 0; border:none;">
+            <span class="badge badge-completed">● Operational</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0; color:var(--muted); border:none;">Modules</td>
+          <td style="padding:8px 0; border:none; font-weight:600;">Patients · Doctors · Appointments</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

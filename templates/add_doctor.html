@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Add Doctor — MediCare HMS{% endblock %}
+{% block page_title %}Add New Doctor{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width:900px;">
+  <div class="card-header">
+    <span class="card-title">Doctor Registration</span>
+    <a href="{{ url_for('doctors') }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-arrow-left"></i> Back</a>
+  </div>
+  <div class="card-body">
+    <form method="post">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>First Name *</label>
+          <input type="text" name="first_name" required placeholder="e.g. Arjun">
+        </div>
+        <div class="form-group">
+          <label>Last Name *</label>
+          <input type="text" name="last_name" required placeholder="e.g. Mehta">
+        </div>
+        <div class="form-group">
+          <label>Specialization *</label>
+          <select name="specialization" required>
+            <option value="">Select specialization</option>
+            {% for spec in ['Cardiology','Neurology','Pediatrics','Orthopedics','Dermatology',
+                            'General Medicine','ENT','Ophthalmology','Psychiatry','Oncology',
+                            'Gynecology','Urology','Radiology','Anesthesiology','Emergency Medicine'] %}
+            <option>{{ spec }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Qualification</label>
+          <input type="text" name="qualification" placeholder="e.g. MBBS, MD Cardiology">
+        </div>
+        <div class="form-group">
+          <label>Phone Number *</label>
+          <input type="tel" name="phone" required placeholder="e.g. 9876543210">
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" name="email" placeholder="doctor@hospital.com">
+        </div>
+        <div class="form-group">
+          <label>Years of Experience</label>
+          <input type="number" name="experience" min="0" max="50" value="0">
+        </div>
+        <div class="form-group">
+          <label>Availability</label>
+          <input type="text" name="availability" placeholder="e.g. Mon-Fri 9AM-5PM" value="Mon-Fri 9AM-5PM">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-stethoscope"></i> Add Doctor</button>
+        <a href="{{ url_for('doctors') }}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

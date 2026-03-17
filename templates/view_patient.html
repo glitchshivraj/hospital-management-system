@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}{{ patient.first_name }} {{ patient.last_name }} — MediCare HMS{% endblock %}
+{% block page_title %}Patient Profile{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+  <div style="font-size:.75rem; opacity:.5; margin-bottom:6px; text-transform:uppercase; letter-spacing:.15em;">Patient ID: P{{ '%04d'|format(patient.id) }}</div>
+  <div class="profile-name">{{ patient.first_name }} {{ patient.last_name }}</div>
+  <div class="profile-meta">{{ patient.gender }} &nbsp;·&nbsp; Blood: {{ patient.blood_group or 'Unknown' }} &nbsp;·&nbsp; {{ patient.phone }}</div>
+  <div style="margin-top:16px; display:flex; gap:10px;">
+    <a href="{{ url_for('edit_patient', id=patient.id) }}" class="btn btn-outline btn-sm" style="border-color:rgba(255,255,255,.3); color:white;">
+      <i class="fa-solid fa-pen"></i> Edit
+    </a>
+    <a href="{{ url_for('book_appointment') }}" class="btn btn-success btn-sm">
+      <i class="fa-solid fa-calendar-plus"></i> Book Appointment
+    </a>
+  </div>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:24px;">
+  <div class="card">
+    <div class="card-header"><span class="card-title">Personal Details</span></div>
+    <div class="card-body">
+      <table style="font-size:.87rem; width:100%;">
+        {% set rows = [
+          ('Date of Birth', patient.date_of_birth.strftime('%d %B %Y') if patient.date_of_birth else '—'),
+          ('Gender', patient.gender),
+          ('Blood Group', patient.blood_group or '—'),
+          ('Phone', patient.phone),
+          ('Email', patient.email or '—'),
+          ('Emergency Contact', patient.emergency_contact or '—'),
+        ] %}
+        {% for label, val in rows %}
+        <tr>
+          <td style="padding:8px 0; color:var(--muted); width:40%; border:none;">{{ label }}</td>
+          <td style="padding:8px 0; font-weight:500; border:none;">{{ val }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Address</span></div>
+    <div class="card-body">
+      <p style="font-size:.88rem; color:var(--muted); line-height:1.7;">{{ patient.address or 'No address on record.' }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Appointment History</span>
+    <a href="{{ url_for('book_appointment') }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-calendar-plus"></i> New</a>
+  </div>
+  <div class="table-wrap">
+    {% if appointments %}
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Time</th><th>Doctor</th><th>Specialization</th><th>Reason</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        {% for a in appointments %}
+        <tr>
+          <td>{{ a.appointment_date.strftime('%d %b %Y') }}</td>
+          <td>{{ a.appointment_time }}</td>
+          <td>Dr. {{ a.doc_first }} {{ a.doc_last }}</td>
+          <td><span class="badge badge-spec">{{ a.specialization }}</span></td>
+          <td class="text-muted text-small">{{ a.reason or '—' }}</td>
+          <td><span class="badge badge-{{ a.status|lower|replace(' ','-') }}">{{ a.status }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><i class="fa-solid fa-calendar-xmark"></i><p>No appointments yet.</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

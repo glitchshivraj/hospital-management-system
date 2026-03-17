@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Dr. {{ doctor.first_name }} {{ doctor.last_name }} — MediCare HMS{% endblock %}
+{% block page_title %}Doctor Profile{% endblock %}
+
+{% block content %}
+<div class="profile-header" style="background: linear-gradient(135deg, #064e3b 0%, #059669 100%);">
+  <div style="font-size:.75rem; opacity:.5; margin-bottom:6px; text-transform:uppercase; letter-spacing:.15em;">Doctor ID: D{{ '%04d'|format(doctor.id) }}</div>
+  <div class="profile-name">Dr. {{ doctor.first_name }} {{ doctor.last_name }}</div>
+  <div class="profile-meta">{{ doctor.specialization }} &nbsp;·&nbsp; {{ doctor.experience_years }} yrs experience &nbsp;·&nbsp; {{ doctor.phone }}</div>
+  <div style="margin-top:16px; display:flex; gap:10px;">
+    <a href="{{ url_for('edit_doctor', id=doctor.id) }}" class="btn btn-outline btn-sm" style="border-color:rgba(255,255,255,.3); color:white;">
+      <i class="fa-solid fa-pen"></i> Edit
+    </a>
+  </div>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:24px;">
+  <div class="card">
+    <div class="card-header"><span class="card-title">Professional Details</span></div>
+    <div class="card-body">
+      <table style="font-size:.87rem; width:100%;">
+        {% set rows = [
+          ('Specialization', doctor.specialization),
+          ('Qualification', doctor.qualification or '—'),
+          ('Experience', doctor.experience_years|string + ' years'),
+          ('Phone', doctor.phone),
+          ('Email', doctor.email or '—'),
+          ('Availability', doctor.availability),
+        ] %}
+        {% for label, val in rows %}
+        <tr>
+          <td style="padding:8px 0; color:var(--muted); width:40%; border:none;">{{ label }}</td>
+          <td style="padding:8px 0; font-weight:500; border:none;">{{ val }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Stats</span></div>
+    <div class="card-body">
+      <div style="font-size:2.5rem; font-weight:700; color:var(--navy);">{{ appointments|length }}</div>
+      <div style="color:var(--muted); font-size:.85rem;">Total Appointments</div>
+      <div style="margin-top:16px; font-size:1.4rem; font-weight:700; color:var(--success);">
+        {{ appointments|selectattr('status','equalto','Completed')|list|length }}
+      </div>
+      <div style="color:var(--muted); font-size:.85rem;">Completed</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><span class="card-title">Appointment Schedule</span></div>
+  <div class="table-wrap">
+    {% if appointments %}
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Time</th><th>Patient</th><th>Reason</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        {% for a in appointments %}
+        <tr>
+          <td>{{ a.appointment_date.strftime('%d %b %Y') }}</td>
+          <td>{{ a.appointment_time }}</td>
+          <td>{{ a.pat_first }} {{ a.pat_last }}</td>
+          <td class="text-muted text-small">{{ a.reason or '—' }}</td>
+          <td><span class="badge badge-{{ a.status|lower|replace(' ','-') }}">{{ a.status }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><i class="fa-solid fa-calendar-xmark"></i><p>No appointments scheduled.</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

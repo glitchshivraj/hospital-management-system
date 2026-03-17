@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Appointments — MediCare HMS{% endblock %}
+{% block page_title %}Appointments{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">All Appointments <span style="font-size:.85rem; color:var(--muted); font-weight:400;">({{ appointments|length }})</span></span>
+    <a href="{{ url_for('book_appointment') }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-calendar-plus"></i> Book Appointment</a>
+  </div>
+  <div class="table-wrap">
+    {% if appointments %}
+    <table>
+      <thead>
+        <tr><th>#</th><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Reason</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for a in appointments %}
+        <tr>
+          <td class="text-muted text-small">{{ a.id }}</td>
+          <td>
+            <div style="font-weight:600;">{{ a.pat_first }} {{ a.pat_last }}</div>
+          </td>
+          <td>
+            <div>Dr. {{ a.doc_first }} {{ a.doc_last }}</div>
+            <div><span class="badge badge-spec text-small">{{ a.specialization }}</span></div>
+          </td>
+          <td>{{ a.appointment_date.strftime('%d %b %Y') }}</td>
+          <td>{{ a.appointment_time }}</td>
+          <td class="text-muted text-small" style="max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ a.reason or '—' }}</td>
+          <td>
+            <select class="status-select" data-id="{{ a.id }}" style="font-size:.78rem; padding:4px 8px; border-radius:6px;">
+              {% for s in ['Scheduled','Completed','Cancelled','No-Show'] %}
+              <option {% if a.status==s %}selected{% endif %}>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <a href="{{ url_for('edit_appointment', id=a.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-pen"></i></a>
+              <form method="post" action="{{ url_for('delete_appointment', id=a.id) }}" onsubmit="return confirm('Cancel this appointment?')">
+                <button class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><i class="fa-solid fa-calendar-xmark"></i><p>No appointments found.</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.status-select').forEach(sel => {
+  sel.addEventListener('change', async function() {
+    const id = this.dataset.id;
+    const status = this.value;
+    await fetch(`/api/appointment/${id}/status`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({status})
+    });
+    // Update row style
+    const badge = {'Scheduled':'badge-scheduled','Completed':'badge-completed','Cancelled':'badge-cancelled','No-Show':'badge-no-show'};
+    this.style.color = status === 'Completed' ? 'var(--success)' :
+                       status === 'Cancelled' ? 'var(--danger)' :
+                       status === 'No-Show'   ? 'var(--warn)' : 'var(--teal)';
+  });
+});
+</script>
+{% endblock %}

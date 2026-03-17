@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Edit Appointment — MediCare HMS{% endblock %}
+{% block page_title %}Edit Appointment{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width:860px;">
+  <div class="card-header">
+    <span class="card-title">Edit Appointment #{{ appointment.id }}</span>
+    <a href="{{ url_for('appointments') }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-arrow-left"></i> Back</a>
+  </div>
+  <div class="card-body">
+    <div style="background:var(--surface); border-radius:8px; padding:14px 18px; margin-bottom:24px; font-size:.88rem;">
+      <strong>{{ appointment.pat_first }} {{ appointment.pat_last }}</strong> with
+      <strong>Dr. {{ appointment.doc_first }} {{ appointment.doc_last }}</strong>
+    </div>
+    <form method="post">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Appointment Date *</label>
+          <input type="date" name="appointment_date" value="{{ appointment.appointment_date }}" required>
+        </div>
+        <div class="form-group">
+          <label>Appointment Time *</label>
+          <input type="time" name="appointment_time" value="{{ appointment.appointment_time }}" required>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select name="status">
+            {% for s in ['Scheduled','Completed','Cancelled','No-Show'] %}
+            <option {% if appointment.status==s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Reason for Visit</label>
+          <input type="text" name="reason" value="{{ appointment.reason or '' }}">
+        </div>
+        <div class="form-group full">
+          <label>Notes</label>
+          <textarea name="notes">{{ appointment.notes or '' }}</textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+        <a href="{{ url_for('appointments') }}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

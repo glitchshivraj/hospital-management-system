@@ -7,11 +7,11 @@ app = Flask(__name__)
 app.secret_key = 'hospital_secret_key_2024'
 
 # MySQL Configuration
-app.config['MYSQL_HOST'] = os.environ.get('MYSQL_HOST', 'localhost')
-app.config['MYSQL_USER'] = os.environ.get('MYSQL_USER', 'root')
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = os.environ.get('MYSQL_DB', 'hospital_db')
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+app.config['MYSQL_HOST'] = 'turntable.proxy.rlwy.net'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'vZCxbxQtYvRRDbGacvMUWmJlnRflbrhS'
+app.config['MYSQL_DB'] = 'railway'
+app.config['MYSQL_PORT'] = 54415
 
 mysql = MySQL(app)
 

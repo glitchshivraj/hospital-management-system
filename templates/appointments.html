@@ -25,7 +25,7 @@
             <div>Dr. {{ a.doc_first }} {{ a.doc_last }}</div>
             <div><span class="badge badge-spec text-small">{{ a.specialization }}</span></div>
           </td>
-          <td>{{ a.appointment_date.strftime('%d %b %Y') }}</td>
+          <td>{{ a.appointment_date }}</td>
           <td>{{ a.appointment_time }}</td>
           <td class="text-muted text-small" style="max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ a.reason or '—' }}</td>
           <td>

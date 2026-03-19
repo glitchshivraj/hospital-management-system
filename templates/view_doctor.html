@@ -60,7 +60,7 @@
       <tbody>
         {% for a in appointments %}
         <tr>
-          <td>{{ a.appointment_date.strftime('%d %b %Y') }}</td>
+          <td>{{ a.appointment_date }}</td>
           <td>{{ a.appointment_time }}</td>
           <td>{{ a.pat_first }} {{ a.pat_last }}</td>
           <td class="text-muted text-small">{{ a.reason or '—' }}</td>

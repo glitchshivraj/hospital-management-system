@@ -61,7 +61,7 @@
       <tbody>
         {% for a in appointments %}
         <tr>
-          <td>{{ a.appointment_date.strftime('%d %b %Y') }}</td>
+          <td>{{ a.appointment_date }}</td>
           <td>{{ a.appointment_time }}</td>
           <td>Dr. {{ a.doc_first }} {{ a.doc_last }}</td>
           <td><span class="badge badge-spec">{{ a.specialization }}</span></td>

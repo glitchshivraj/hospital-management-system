@@ -286,7 +286,144 @@ def book_appointment():
         patients=patients,
         doctors=doctors
     )
+# ─────────────────────────────
+# VIEW & EDIT PATIENT
+# ─────────────────────────────
+@app.route("/patients/<int:id>")
+def view_patient(id):
+    conn = get_db_connection()
+    patient = conn.execute("SELECT * FROM patients WHERE id=?", (id,)).fetchone()
+    appointments = conn.execute("""
+        SELECT a.*, d.first_name AS doc_first, d.last_name AS doc_last,
+               d.specialization
+        FROM appointments a
+        JOIN doctors d ON a.doctor_id = d.id
+        WHERE a.patient_id = ?
+        ORDER BY a.appointment_date DESC
+    """, (id,)).fetchall()
+    conn.close()
+    return render_template("view_patient.html", patient=patient, appointments=appointments)
 
+
+@app.route("/patients/edit/<int:id>", methods=["GET", "POST"])
+def edit_patient(id):
+    conn = get_db_connection()
+    if request.method == "POST":
+        conn.execute("""
+            UPDATE patients
+            SET first_name=?, last_name=?, date_of_birth=?, gender=?,
+                phone=?, email=?, address=?, blood_group=?, emergency_contact=?
+            WHERE id=?
+        """, (
+            request.form["first_name"], request.form["last_name"],
+            request.form["dob"], request.form["gender"],
+            request.form["phone"], request.form["email"],
+            request.form["address"], request.form["blood_group"],
+            request.form["emergency_contact"], id
+        ))
+        conn.commit()
+        conn.close()
+        flash("Patient updated successfully!", "success")
+        return redirect(url_for("view_patient", id=id))
+    patient = conn.execute("SELECT * FROM patients WHERE id=?", (id,)).fetchone()
+    conn.close()
+    return render_template("edit_patient.html", patient=patient)
+
+
+# ─────────────────────────────
+# VIEW & EDIT DOCTOR
+# ─────────────────────────────
+@app.route("/doctors/<int:id>")
+def view_doctor(id):
+    conn = get_db_connection()
+    doctor = conn.execute("SELECT * FROM doctors WHERE id=?", (id,)).fetchone()
+    appointments = conn.execute("""
+        SELECT a.*, p.first_name AS pat_first, p.last_name AS pat_last
+        FROM appointments a
+        JOIN patients p ON a.patient_id = p.id
+        WHERE a.doctor_id = ?
+        ORDER BY a.appointment_date DESC
+    """, (id,)).fetchall()
+    conn.close()
+    return render_template("view_doctor.html", doctor=doctor, appointments=appointments)
+
+
+@app.route("/doctors/edit/<int:id>", methods=["GET", "POST"])
+def edit_doctor(id):
+    conn = get_db_connection()
+    if request.method == "POST":
+        conn.execute("""
+            UPDATE doctors
+            SET first_name=?, last_name=?, specialization=?, phone=?,
+                email=?, experience_years=?, qualification=?, availability=?
+            WHERE id=?
+        """, (
+            request.form["first_name"], request.form["last_name"],
+            request.form["specialization"], request.form["phone"],
+            request.form["email"], request.form["experience"],
+            request.form["qualification"], request.form["availability"], id
+        ))
+        conn.commit()
+        conn.close()
+        flash("Doctor updated successfully!", "success")
+        return redirect(url_for("view_doctor", id=id))
+    doctor = conn.execute("SELECT * FROM doctors WHERE id=?", (id,)).fetchone()
+    conn.close()
+    return render_template("edit_doctor.html", doctor=doctor)
+
+
+@app.route("/doctors/delete/<int:id>", methods=["POST"])
+def delete_doctor(id):
+    conn = get_db_connection()
+    conn.execute("DELETE FROM appointments WHERE doctor_id=?", (id,))
+    conn.execute("DELETE FROM doctors WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+    flash("Doctor removed.", "info")
+    return redirect(url_for("doctors"))
+
+
+# ─────────────────────────────
+# EDIT & DELETE APPOINTMENT
+# ─────────────────────────────
+@app.route("/appointments/edit/<int:id>", methods=["GET", "POST"])
+def edit_appointment(id):
+    conn = get_db_connection()
+    if request.method == "POST":
+        conn.execute("""
+            UPDATE appointments
+            SET appointment_date=?, appointment_time=?,
+                reason=?, notes=?, status=?
+            WHERE id=?
+        """, (
+            request.form["appointment_date"], request.form["appointment_time"],
+            request.form["reason"], request.form["notes"],
+            request.form["status"], id
+        ))
+        conn.commit()
+        conn.close()
+        flash("Appointment updated!", "success")
+        return redirect(url_for("appointments"))
+    appointment = conn.execute("""
+        SELECT a.*, p.first_name AS pat_first, p.last_name AS pat_last,
+               d.first_name AS doc_first, d.last_name AS doc_last
+        FROM appointments a
+        JOIN patients p ON a.patient_id = p.id
+        JOIN doctors d ON a.doctor_id = d.id
+        WHERE a.id=?
+    """, (id,)).fetchone()
+    conn.close()
+    return render_template("edit_appointment.html", appointment=appointment)
+
+
+@app.route("/appointments/delete/<int:id>", methods=["POST"])
+def delete_appointment(id):
+    conn = get_db_connection()
+    conn.execute("DELETE FROM appointments WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+    flash("Appointment cancelled.", "info")
+    return redirect(url_for("appointments"))
 
 # ─────────────────────────────
 # API
@@ -313,4 +450,4 @@ def update_status(id):
 # RUN
 # ─────────────────────────────
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

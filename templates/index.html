@@ -1,83 +1,119 @@
 {% extends 'base.html' %}
-{% block title %}Dashboard — MediCare HMS{% endblock %}
+{% block title %}Dashboard — MS Hospital{% endblock %}
 {% block page_title %}Dashboard{% endblock %}
-
+ 
 {% block content %}
+<!-- STATS -->
 <div class="stats-grid">
-  <div class="stat-card">
-    <div class="stat-icon blue"><i class="fa-solid fa-bed-pulse"></i></div>
+  <div class="stat-card gold">
+    <div class="stat-icon gold"><i class="fa-solid fa-hospital-user"></i></div>
     <div>
-      <div class="stat-value">{{ patients_count }}</div>
-      <div class="stat-label">Registered Patients</div>
+      <div class="stat-val">{{ patients_count }}</div>
+      <div class="stat-label">Total Patients</div>
     </div>
   </div>
-  <div class="stat-card">
-    <div class="stat-icon green"><i class="fa-solid fa-user-doctor"></i></div>
+  <div class="stat-card blue">
+    <div class="stat-icon blue"><i class="fa-solid fa-user-doctor"></i></div>
     <div>
-      <div class="stat-value">{{ doctors_count }}</div>
+      <div class="stat-val">{{ doctors_count }}</div>
       <div class="stat-label">Active Doctors</div>
     </div>
   </div>
-  <div class="stat-card">
-    <div class="stat-icon orange"><i class="fa-solid fa-calendar-check"></i></div>
+  <div class="stat-card green">
+    <div class="stat-icon green"><i class="fa-solid fa-calendar-check"></i></div>
     <div>
-      <div class="stat-value">{{ appointments_count }}</div>
-      <div class="stat-label">Total Appointments</div>
+      <div class="stat-val">{{ appointments_count }}</div>
+      <div class="stat-label">Appointments</div>
     </div>
   </div>
-  <div class="stat-card">
-    <div class="stat-icon purple"><i class="fa-solid fa-clock"></i></div>
+  <div class="stat-card purple">
+    <div class="stat-icon purple"><i class="fa-solid fa-file-invoice-dollar"></i></div>
     <div>
-      <div class="stat-value">{{ upcoming_count }}</div>
-      <div class="stat-label">Upcoming Today</div>
+      <div class="stat-val">{{ bills_count }}</div>
+      <div class="stat-label">Total Bills</div>
     </div>
   </div>
 </div>
-
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+ 
+<div class="grid-2 mb-6">
+  <!-- QUICK ACTIONS -->
   <div class="card">
     <div class="card-header">
-      <span class="card-title">Quick Actions</span>
+      <span class="card-title"><i class="fa-solid fa-bolt text-gold" style="margin-right:8px;"></i>Quick Actions</span>
     </div>
-    <div class="card-body" style="display:flex; flex-direction:column; gap:12px;">
+    <div class="card-body" style="display:flex; flex-direction:column; gap:10px;">
       <a href="{{ url_for('add_patient') }}" class="btn btn-primary" style="justify-content:center;">
         <i class="fa-solid fa-user-plus"></i> Register New Patient
       </a>
-      <a href="{{ url_for('add_doctor') }}" class="btn btn-outline" style="justify-content:center;">
-        <i class="fa-solid fa-stethoscope"></i> Add New Doctor
-      </a>
-      <a href="{{ url_for('book_appointment') }}" class="btn btn-success" style="justify-content:center;">
+      <a href="{{ url_for('book_appointment') }}" class="btn btn-blue" style="justify-content:center;">
         <i class="fa-solid fa-calendar-plus"></i> Book Appointment
+      </a>
+      <a href="{{ url_for('add_bill') }}" class="btn btn-green" style="justify-content:center;">
+        <i class="fa-solid fa-file-invoice-dollar"></i> Create Invoice
+      </a>
+      <a href="{{ url_for('add_doctor') }}" class="btn btn-outline" style="justify-content:center;">
+        <i class="fa-solid fa-stethoscope"></i> Add Doctor
       </a>
     </div>
   </div>
-
+ 
+  <!-- HOSPITAL INFO -->
   <div class="card">
     <div class="card-header">
-      <span class="card-title">System Info</span>
+      <span class="card-title"><i class="fa-solid fa-hospital text-gold" style="margin-right:8px;"></i>MS Hospital</span>
+      <span class="badge badge-completed">● Live</span>
     </div>
     <div class="card-body">
-      <table style="font-size:.85rem;">
+      <table style="font-size:.855rem; width:100%;">
+        {% set info = [
+          ('fa-map-marker-alt', 'Location', 'Main Street, City'),
+          ('fa-phone', 'Emergency', '+91 98765 43210'),
+          ('fa-envelope', 'Email', 'info@mshospital.com'),
+          ('fa-clock', 'OPD Hours', 'Mon–Sat  9AM – 6PM'),
+          ('fa-bed', 'Beds', '200 (ICU · General · Private)'),
+          ('fa-shield-halved', 'System', 'Flask + SQLite'),
+        ] %}
+        {% for icon, label, val in info %}
         <tr>
-          <td style="padding:8px 0; color:var(--muted); border:none;">System</td>
-          <td style="padding:8px 0; border:none; font-weight:600;">MediCare MS v1.0</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 0; color:var(--muted); border:none;">Backend</td>
-          <td style="padding:8px 0; border:none; font-weight:600;">Flask + SQlite</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 0; color:var(--muted); border:none;">Status</td>
-          <td style="padding:8px 0; border:none;">
-            <span class="badge badge-completed">● Operational</span>
+          <td style="padding:8px 0; border:none; width:36px;">
+            <i class="fa-solid fa-{{ icon }}" style="color:var(--text3); font-size:.8rem;"></i>
           </td>
+          <td style="padding:8px 0; border:none; color:var(--text3); font-size:.8rem; width:110px;">{{ label }}</td>
+          <td style="padding:8px 0; border:none; font-weight:500; color:var(--text2);">{{ val }}</td>
         </tr>
-        <tr>
-          <td style="padding:8px 0; color:var(--muted); border:none;">Modules</td>
-          <td style="padding:8px 0; border:none; font-weight:600;">Patients · Doctors · Appointments</td>
-        </tr>
+        {% endfor %}
       </table>
     </div>
+  </div>
+</div>
+ 
+<!-- RECENT APPOINTMENTS -->
+<div class="card">
+  <div class="card-header">
+    <span class="card-title"><i class="fa-solid fa-calendar-check text-gold" style="margin-right:8px;"></i>Recent Appointments</span>
+    <a href="{{ url_for('appointments') }}" class="btn btn-outline btn-sm">View All</a>
+  </div>
+  <div class="table-wrap">
+    {% if recent_appointments %}
+    <table>
+      <thead>
+        <tr><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        {% for a in recent_appointments %}
+        <tr>
+          <td><span class="fw-bold" style="color:var(--text);">{{ a.pat_first }} {{ a.pat_last }}</span></td>
+          <td>Dr. {{ a.doc_first }} {{ a.doc_last }}</td>
+          <td>{{ a.appointment_date }}</td>
+          <td>{{ a.appointment_time }}</td>
+          <td><span class="badge badge-{{ a.status|lower|replace(' ','-') }}">{{ a.status }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><i class="fa-solid fa-calendar-xmark"></i><p>No appointments yet.</p></div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

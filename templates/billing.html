@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Billing — MS Hospital{% endblock %}
+{% block page_title %}Patient Billing{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title"><i class="fa-solid fa-file-invoice-dollar text-gold" style="margin-right:8px;"></i>All Invoices <span style="font-size:.8rem; color:var(--text3); font-weight:400;">({{ bills|length }})</span></span>
+    <a href="{{ url_for('add_bill') }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Create Invoice</a>
+  </div>
+  <div class="table-wrap">
+    {% if bills %}
+    <table>
+      <thead>
+        <tr><th>Invoice #</th><th>Patient</th><th>Services</th><th>Amount</th><th>Date</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for b in bills %}
+        <tr>
+          <td><span style="color:var(--gold); font-weight:600;">INV-{{ '%04d'|format(b.id) }}</span></td>
+          <td><span style="color:var(--text); font-weight:600;">{{ b.pat_first }} {{ b.pat_last }}</span></td>
+          <td class="text-sm text-muted">{{ b.services or '—' }}</td>
+          <td><span style="color:var(--text); font-weight:700;">₹{{ '%.2f'|format(b.amount) }}</span></td>
+          <td>{{ b.bill_date }}</td>
+          <td>
+            <span class="badge badge-{{ 'paid' if b.status=='Paid' else 'unpaid' }}">
+              {{ b.status }}
+            </span>
+          </td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <a href="{{ url_for('view_bill', id=b.id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-eye"></i></a>
+              <form method="post" action="{{ url_for('delete_bill', id=b.id) }}" onsubmit="return confirm('Delete this invoice?')">
+                <button class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><i class="fa-solid fa-file-invoice"></i><p>No invoices created yet.</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

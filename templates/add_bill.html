@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Create Invoice — MS Hospital{% endblock %}
+{% block page_title %}Create Invoice{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width:860px;">
+  <div class="card-header">
+    <span class="card-title"><i class="fa-solid fa-file-invoice-dollar text-gold" style="margin-right:8px;"></i>New Invoice</span>
+    <a href="{{ url_for('billing') }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-arrow-left"></i> Back</a>
+  </div>
+  <div class="card-body">
+    <form method="post">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Patient *</label>
+          <select name="patient_id" required>
+            <option value="">Select patient</option>
+            {% for p in patients %}
+            <option value="{{ p.id }}">{{ p.first_name }} {{ p.last_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Bill Date *</label>
+          <input type="date" name="bill_date" required>
+        </div>
+        <div class="form-group">
+          <label>Total Amount (₹) *</label>
+          <input type="number" name="amount" step="0.01" min="0" required placeholder="e.g. 1500.00">
+        </div>
+        <div class="form-group">
+          <label>Payment Status</label>
+          <select name="status">
+            <option value="Unpaid">Unpaid</option>
+            <option value="Paid">Paid</option>
+            <option value="Partial">Partial</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Services Rendered</label>
+          <input type="text" name="services" placeholder="e.g. Consultation, X-Ray, Blood Test">
+        </div>
+        <div class="form-group full">
+          <label>Notes</label>
+          <textarea name="notes" placeholder="Additional billing notes..."></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-file-invoice-dollar"></i> Generate Invoice</button>
+        <a href="{{ url_for('billing') }}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelector('[name="bill_date"]').value = new Date().toISOString().split('T')[0];
+</script>
+{% endblock %}

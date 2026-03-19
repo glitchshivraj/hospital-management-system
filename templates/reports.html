@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Reports — MS Hospital{% endblock %}
+{% block page_title %}Reports & Analytics{% endblock %}
+
+{% block content %}
+<!-- SUMMARY STATS -->
+<div class="stats-grid mb-6">
+  <div class="stat-card gold">
+    <div class="stat-icon gold"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+    <div>
+      <div class="stat-val">₹{{ '%.0f'|format(total_revenue) }}</div>
+      <div class="stat-label">Total Revenue</div>
+    </div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+    <div>
+      <div class="stat-val">₹{{ '%.0f'|format(paid_revenue) }}</div>
+      <div class="stat-label">Collected</div>
+    </div>
+  </div>
+  <div class="stat-card blue">
+    <div class="stat-icon blue"><i class="fa-solid fa-calendar-check"></i></div>
+    <div>
+      <div class="stat-val">{{ completed_appointments }}</div>
+      <div class="stat-label">Completed Visits</div>
+    </div>
+  </div>
+  <div class="stat-card purple">
+    <div class="stat-icon purple"><i class="fa-solid fa-clock"></i></div>
+    <div>
+      <div class="stat-val">{{ pending_bills }}</div>
+      <div class="stat-label">Pending Bills</div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- TOP DOCTORS -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="fa-solid fa-ranking-star text-gold" style="margin-right:8px;"></i>Top Doctors by Appointments</span>
+    </div>
+    <div class="table-wrap">
+      {% if top_doctors %}
+      <table>
+        <thead><tr><th>Doctor</th><th>Specialization</th><th>Appointments</th></tr></thead>
+        <tbody>
+          {% for d in top_doctors %}
+          <tr>
+            <td><span style="color:var(--text); font-weight:600;">Dr. {{ d.first_name }} {{ d.last_name }}</span></td>
+            <td><span class="badge badge-spec">{{ d.specialization }}</span></td>
+            <td><span style="color:var(--gold); font-weight:700;">{{ d.appt_count }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state"><i class="fa-solid fa-user-doctor"></i><p>No data yet.</p></div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- APPOINTMENT STATUS BREAKDOWN -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="fa-solid fa-chart-pie text-gold" style="margin-right:8px;"></i>Appointment Status</span>
+    </div>
+    <div class="card-body">
+      {% set statuses = [
+        ('Scheduled', appt_scheduled, 'blue'),
+        ('Completed', appt_completed, 'green'),
+        ('Cancelled', appt_cancelled, 'red'),
+        ('No-Show',   appt_noshow,   'gold'),
+      ] %}
+      {% set total_appts = appt_scheduled + appt_completed + appt_cancelled + appt_noshow %}
+      {% for label, count, color in statuses %}
+      <div style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="font-size:.82rem; color:var(--text2);">{{ label }}</span>
+          <span style="font-size:.82rem; font-weight:600; color:var(--text);">{{ count }}</span>
+        </div>
+        <div style="background:var(--bg3); border-radius:4px; height:6px; overflow:hidden;">
+          <div style="height:100%; background:var(--{{ color }}); width:{{ ((count / total_appts * 100) if total_appts > 0 else 0)|round }}%; border-radius:4px; transition:width .6s;"></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -23,7 +23,7 @@
     <div class="card-body">
       <table style="font-size:.87rem; width:100%;">
         {% set rows = [
-          ('Date of Birth', patient.date_of_birth.strftime('%d %B %Y') if patient.date_of_birth else '—'),
+          ('Date of Birth', patient.date_of_birth or '—'),
           ('Gender', patient.gender),
           ('Blood Group', patient.blood_group or '—'),
           ('Phone', patient.phone),

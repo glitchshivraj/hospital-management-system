@@ -38,7 +38,7 @@
               </div>
             </div>
           </td>
-          <td>{{ p.date_of_birth.strftime('%d %b %Y') if p.date_of_birth else '—' }}</td>
+          <td>{{ p.date_of_birth or '—' }}</td>
           <td>{{ p.gender }}</td>
           <td><span class="badge badge-spec">{{ p.blood_group or '—' }}</span></td>
           <td>{{ p.phone }}</td>

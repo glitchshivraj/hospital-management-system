@@ -8,6 +8,8 @@ app = Flask(__name__)
 app.secret_key = "ms_hospital_secret_2024"
  
 DATABASE_URL = os.environ.get("DATABASE_URL")
+
+print("DATABASE_URL loaded:", DATABASE_URL is not None)
  
  
 def get_db_connection():
@@ -15,7 +17,7 @@ def get_db_connection():
     conn = pg8000.connect(
         host=url.hostname,
         port=url.port or 5432,
-        database=url.path[1:],
+        database=url.path.lstrip('/'),
         user=url.username,
         password=url.password,
         ssl_context=True

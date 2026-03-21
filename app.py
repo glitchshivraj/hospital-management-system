@@ -3,6 +3,7 @@ import pg8000
 import pg8000.native
 import urllib.parse as urlparse
 import os
+import ssl
  
 app = Flask(__name__)
 app.secret_key = "ms_hospital_secret_2024"
@@ -20,7 +21,7 @@ def get_db_connection():
         database=url.path.lstrip('/'),
         user=url.username,
         password=url.password,
-        ssl_context=True
+        ssl_context=ssl.create_default_context()
     )
     return conn
  
